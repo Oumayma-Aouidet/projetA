@@ -1,0 +1,23 @@
+<!-- src/app/login/login.component.html -->
+<div class="auth-container">
+    <!--<app-logo></app-logo>-->
+    <mat-card class="auth-card">
+      <mat-card-title class="auth-title">Authentification</mat-card-title>
+      <mat-card-content>
+        <form (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput placeholder="Password" [(ngModel)]="password" name="password" type="password" required>
+          </mat-form-field>
+          <button mat-raised-button color="primary" class="full-width" type="submit">Login</button>
+        </form>
+        <a routerLink="/sign-up">Inscription</a>
+        <a href="#" class="forgot-password-link">Mot de passe oublié ?</a>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  
