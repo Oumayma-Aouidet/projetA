@@ -6,9 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 
-
-import { User } from '../../models/User';
 import { Chart, ChartOptions } from 'chart.js';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-admin-dashboard',
