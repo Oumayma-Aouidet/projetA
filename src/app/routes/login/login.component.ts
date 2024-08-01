@@ -5,9 +5,20 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+import { SignUpComponent } from '../sign-up/sign-up.component';
+import { CommonModule } from '@angular/common';  // Importer CommonModule
+
+
+const routes: Routes = [
+  { path: 'sign-up', component: SignUpComponent },
+  // autres routes
+];
+
 
 @Component({
+  providers: [SignUpComponent],
+
   selector: 'app-login',
   standalone: true,
   imports: [
@@ -16,7 +27,8 @@ import { RouterModule } from '@angular/router';
     MatInputModule,
     MatButtonModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    CommonModule 
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'

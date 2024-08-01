@@ -5,6 +5,7 @@ import { HomeComponent } from './routes/home/home.component';
 import { AdminDashboardComponent } from './routes/admin-dashboard/admin-dashboard.component';
 import { ClientDashboardComponent } from './routes/client-dashboard/client-dashboard.component';
 import { LoginComponent } from './routes/login/login.component';
+import { SignUpComponent } from './routes/sign-up/sign-up.component';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ import { LoginComponent } from './routes/login/login.component';
       RouterOutlet,
        NavbarComponent
       ],
-  providers: [HomeComponent, AdminDashboardComponent, ClientDashboardComponent, LoginComponent],
+  providers: [HomeComponent, AdminDashboardComponent, ClientDashboardComponent, LoginComponent, SignUpComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
