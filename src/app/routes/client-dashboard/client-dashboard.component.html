@@ -39,10 +39,15 @@
   <div class="export-link">
     <a href="#">Exporter vers CFONB</a>
   </div>
+  
 
+
+
+
+  
   <div class="transfer-form">
     <h3>Virement compte à compte</h3>
-    <form [formGroup]="transferForm" (ngSubmit)="onTransfer()">
+    <form [formGroup]="transferForm" (ngSubmit)="onSubmitTransfer()">
       <div class="form-group">
         <label for="fromAccount">Compte à débiter:</label>
         <select formControlName="fromAccount" id="fromAccount">
@@ -88,3 +93,4 @@
       <button type="submit" class="btn-submit">Continuer</button>
     </form>
   </div>
+</div>

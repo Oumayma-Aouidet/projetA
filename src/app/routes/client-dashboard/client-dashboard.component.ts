@@ -17,11 +17,11 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
   styleUrls: ['./client-dashboard.component.css']
 })
 export class ClientDashboardComponent implements OnInit {
-onTransfer() {
-throw new Error('Method not implemented.');
-}
+  onTransfer() {
+    throw new Error('Method not implemented.');
+  }
   
-  // Data for accounts and currencies
+  // Données pour les comptes et devises
   accounts = [
     { number: '123456789', label: 'Compte principal' },
     { number: '987654321', label: 'Compte épargne' },
@@ -31,7 +31,7 @@ throw new Error('Method not implemented.');
 
   currencies: string[] = ['TND', 'EUR', 'USD', 'CAD', 'GBP'];
 
-  // DataSource for the table
+  // DataSource pour le tableau
   dataSource = [
     { accountNumber: '123456789', accountLabel: 'Compte principal', date: new Date('2024-07-10'), currency: 'TND', balance: 2500.75 },
     { accountNumber: '987654321', accountLabel: 'Compte épargne', date: new Date('2024-07-10'), currency: 'TND', balance: 7500.32 },
@@ -39,42 +39,42 @@ throw new Error('Method not implemented.');
     { accountNumber: '456789012', accountLabel: 'Compte crédit', date: new Date('2024-07-10'), currency: 'TND', balance: -500.0 },
   ];
 
-  // Total balance calculation
+  // Calcul du solde total
   totalBalance: number = this.calculateTotalBalance();
   
-  // Columns to display in the table
+  // Colonnes à afficher dans le tableau
   displayedColumns: string[] = ['accountNumber', 'accountLabel', 'date', 'currency', 'balance'];
   
-  // FormGroup for the transfer form
+  // FormGroup pour le formulaire de virement
   transferForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
-    // Initialize the transfer form with validation rules
+    // Initialisation du formulaire de virement avec les règles de validation
     this.transferForm = this.fb.group({
       fromAccount: ['', Validators.required],
       currency: ['', Validators.required],
       toAccount: ['', Validators.required],
       amount: ['', [Validators.required, Validators.min(0.01)]],
-      reason: [''],
-      executionDate: ['', Validators.required]
+      motif: [''],  // Remplacez 'reason' par 'motif'
+      date: ['', Validators.required]  // Remplacez 'executionDate' par 'date'
     });
   }
 
   ngOnInit(): void {
-    // Component initialization logic can be added here
+    // La logique d'initialisation du composant peut être ajoutée ici
   }
 
-  // Function to calculate the total balance across all accounts
+  // Fonction pour calculer le solde total de tous les comptes
   calculateTotalBalance(): number {
     return this.dataSource.reduce((acc, curr) => acc + curr.balance, 0);
   }
 
-  // Handler for form submission
+  // Gestionnaire de soumission du formulaire
   onSubmitTransfer(): void {
     if (this.transferForm.valid) {
       const transferData = this.transferForm.value;
       console.log('Transfer data:', transferData);
-      // Logic to process the transfer can be added here
+      // La logique pour traiter le virement peut être ajoutée ici
     } else {
       console.log('Transfer form is invalid');
     }
