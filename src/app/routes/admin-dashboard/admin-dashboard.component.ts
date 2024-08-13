@@ -5,9 +5,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-
-import { Chart, ChartOptions } from 'chart.js';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { User } from '../../models/user';
+import { DeleteConfirmationDialogComponent } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { ResetPasswordDialogComponent } from '../reset-password-dialog/reset-password-dialog.component.componenet' ;
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -20,10 +21,10 @@ import { User } from '../../models/user';
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    
+    MatDialogModule
   ],
   templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.css'
+  styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
   userForm: FormGroup;
@@ -36,11 +37,11 @@ export class AdminDashboardComponent implements OnInit {
   transactions: any[] = [];
   transactionId: string = '';
   assignUsername: string = '';
-username: any;
-password: any;
-role: any;
+  username: any;
+  password: any;
+  role: any;
 
-  constructor(private fb: FormBuilder) { 
+  constructor(private fb: FormBuilder, private dialog: MatDialog) { 
     this.userForm = this.fb.group({
       username: [''],
       password: [''],
@@ -49,54 +50,7 @@ role: any;
   }
 
   ngOnInit(): void {
-    //this.loadUserChart();
-    //this.loadTransactionChart();
-  }
-
-  loadUserChart() {
-    new Chart('userChart', {
-      type: 'bar',
-      data: {
-        labels: ['January', 'February', 'March', 'April'],
-        datasets: [{
-          label: 'Users',
-          data: [10, 20, 30, 40],
-          backgroundColor: 'rgba(0, 77, 64, 0.6)',
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      } as ChartOptions
-    });
-  }
-
-  loadTransactionChart() {
-    new Chart('transactionChart', {
-      type: 'line',
-      data: {
-        labels: ['January', 'February', 'March', 'April'],
-        datasets: [{
-          label: 'Transactions',
-          data: [15, 25, 35, 45],
-          backgroundColor: 'rgba(0, 77, 64, 0.6)',
-          borderColor: 'rgba(0, 77, 64, 1)',
-          fill: false,
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      } as ChartOptions
-    });
+    // Initialization logic here
   }
 
   onCreateUser() {
@@ -118,24 +72,36 @@ role: any;
   }
 
   onDeleteUser(user: User) {
-    const index = this.users.findIndex(u => u.id === user.id);
-    if (index !== -1) {
-      this.users.splice(index, 1);
-      this.dataSource.data = [...this.users];
-    } else {
-      console.error(`User with ID ${user.id} not found.`);
-    }
+    const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const index = this.users.findIndex(u => u.id === user.id);
+        if (index !== -1) {
+          this.users.splice(index, 1);
+          this.dataSource.data = [...this.users];
+        } else {
+          console.error(`User with ID ${user.id} not found.`);
+        }
+      }
+    });
   }
 
   onResetPassword(user: User) {
-    const foundUser = this.users.find(u => u.id === user.id);
-    if (foundUser) {
-      foundUser.password = 'newPassword123';
-      this.dataSource.data = [...this.users];
-      console.log(`Password reset for user ${foundUser.username}`);
-    } else {
-      console.error(`User with ID ${user.id} not found.`);
-    }
+    const dialogRef = this.dialog.open(ResetPasswordDialogComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const foundUser = this.users.find(u => u.id === user.id);
+        if (foundUser) {
+          foundUser.password = 'newPassword123'; // Example of password reset logic
+          this.dataSource.data = [...this.users];
+          console.log(`Password reset for user ${foundUser.username}`);
+        } else {
+          console.error(`User with ID ${user.id} not found.`);
+        }
+      }
+    });
   }
 
   onAssignTransaction() {

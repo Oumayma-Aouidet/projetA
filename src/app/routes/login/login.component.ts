@@ -34,7 +34,17 @@ const routes: Routes = [
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+authResponse: any;
+otpCode: any;
+  
+  
+  authenticate() {
+    
+  }
 
+  verifyCode() {
+    
+  }
   username: string = '';
   password: string = '';
 
