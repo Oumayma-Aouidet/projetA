@@ -6,6 +6,8 @@ import { AdminDashboardComponent } from './routes/admin-dashboard/admin-dashboar
 import { ClientDashboardComponent } from './routes/client-dashboard/client-dashboard.component';
 import { LoginComponent } from './routes/login/login.component';
 import { SignUpComponent } from './routes/sign-up/sign-up.component';
+import { VirementComponent } from './routes/virement/virement.component'; 
+
 
 @Component({
   selector: 'app-root',
@@ -14,9 +16,10 @@ import { SignUpComponent } from './routes/sign-up/sign-up.component';
     RouterLinkActive,
      RouterLink,
       RouterOutlet,
-       NavbarComponent
+       NavbarComponent,
+       VirementComponent
       ],
-  providers: [HomeComponent, AdminDashboardComponent, ClientDashboardComponent, LoginComponent, SignUpComponent],
+  providers: [HomeComponent, AdminDashboardComponent, ClientDashboardComponent, LoginComponent, SignUpComponent,VirementComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router'; 
+
 
 @Component({
   selector: 'app-client-dashboard',
@@ -11,7 +13,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
     MatButtonModule,
     MatTableModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule
   ],
   templateUrl: './client-dashboard.component.html',
   styleUrls: ['./client-dashboard.component.css']

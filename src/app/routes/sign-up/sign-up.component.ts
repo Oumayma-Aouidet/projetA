@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 
 
 @Component({
-  providers: [SignUpComponent],
+  providers: [],
 
   selector: 'sign-up',
   standalone: true,
