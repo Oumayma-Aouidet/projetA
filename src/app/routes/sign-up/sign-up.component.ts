@@ -1,56 +1,114 @@
-import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthenticationService } from '../../../serives/authentication.service';
+import { RegisterRequest } from '../../models/register-request'; 
+import { AuthenticationResponse } from '../../models/authentication-response'; 
+import { VerificationRequest } from '../../models/verification-request'; 
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';  
-
+import { ReactiveFormsModule, FormsModule, } from '@angular/forms';
 
 
 @Component({
-  providers: [],
-
-  selector: 'sign-up',
+  selector: 'app-sign-up',
+  templateUrl: './sign-up.component.html',
+  styleUrls: ['./sign-up.component.scss'],
   standalone: true,
-
   imports: [
-    ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatCheckboxModule,
     MatButtonModule,
-    MatIconModule,
-    MatToolbarModule,
-    RouterModule ,
-    CommonModule
-  ],
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css'],
+    CommonModule,
+    ReactiveFormsModule, FormsModule
+  ]
 })
-export class SignUpComponent {
-  signUpForm: FormGroup;
-username: any;
-email: any;
-password: any;
-confirmPassword: any;
+export class SignUpComponent implements OnInit {
 
-  constructor(private fb: FormBuilder) {
+  signUpForm: FormGroup;
+  registerRequest: RegisterRequest = {};
+  authResponse: AuthenticationResponse = {};
+  message = '';
+  otpCode = '';
+
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router,
+    private fb: FormBuilder
+  ) {
     this.signUpForm = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required],
+      firstname: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
-    });
+    }, { validator: this.passwordMatchValidator });
   }
 
-  onSubmit() {
-    if (this.signUpForm.valid) {
-      // Votre logique de soumission de formulaire
-      console.log(this.signUpForm.value);
+  ngOnInit(): void {
+    // Initialization code if needed
+  }
+
+  passwordMatchValidator(formGroup: FormGroup): void {
+    const password = formGroup.get('password')?.value;
+    const confirmPassword = formGroup.get('confirmPassword')?.value;
+    if (password !== confirmPassword) {
+      formGroup.get('confirmPassword')?.setErrors({ passwordMismatch: true });
+    } else {
+      formGroup.get('confirmPassword')?.setErrors(null);
     }
+  }
+
+  onSubmit(): void {
+    if (this.signUpForm.valid) {
+      this.registerUser();
+    }
+  }
+
+  registerUser(): void {
+    this.message = '';
+    this.authService.register(this.registerRequest)
+      .subscribe({
+        next: (response) => {
+          if (response) {
+            this.authResponse = response;
+          } else {
+            this.message = 'Account created successfully\nYou will be redirected to the Login page in 3 seconds';
+            setTimeout(() => {
+              this.router.navigate(['login']);
+            }, 3000);
+          }
+        },
+        error: (err) => {
+          this.message = 'An error occurred. Please try again later.';
+        }
+      });
+  }
+
+  verifyTfa(): void {
+    this.message = '';
+    const verifyRequest: VerificationRequest = {
+      email: this.registerRequest.email,
+      code: this.otpCode
+    };
+    this.authService.verifyCode(verifyRequest)
+      .subscribe({
+        next: (response) => {
+          this.message = 'Account created successfully\nYou will be redirected to the Welcome page in 3 seconds';
+          setTimeout(() => {
+            localStorage.setItem('token', response.accessToken as string);
+            this.router.navigate(['welcome']);
+          }, 3000);
+        },
+        error: (err) => {
+          this.message = 'An error occurred. Please try again later.';
+        }
+      });
   }
 }
