@@ -26,7 +26,8 @@ import { ReactiveFormsModule, FormsModule, } from '@angular/forms';
     MatCheckboxModule,
     MatButtonModule,
     CommonModule,
-    ReactiveFormsModule, FormsModule
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class SignUpComponent implements OnInit {
@@ -47,7 +48,8 @@ export class SignUpComponent implements OnInit {
       firstname: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
+      mfaEnabled: [false]
     }, { validator: this.passwordMatchValidator });
   }
 
@@ -77,11 +79,11 @@ export class SignUpComponent implements OnInit {
     // Populate registerRequest with form values
     this.registerRequest = {
       firstname: this.signUpForm.get('firstname')?.value,
-      lastname: this.signUpForm.get('lastname')?.value,
+      lastname: this.signUpForm.get('username')?.value, // Fixed mapping
       email: this.signUpForm.get('email')?.value,
       password: this.signUpForm.get('password')?.value,
-      role: 'USER',  // ou tout autre rôle par défaut
-      mfaEnabled: 'false' // ou 'true' si nécessaire
+      role: 'USER',  // Default role or adjust as needed
+      mfaEnabled: this.signUpForm.get('mfaEnabled')?.value || false
     };
   
     this.authService.register(this.registerRequest)
@@ -89,8 +91,7 @@ export class SignUpComponent implements OnInit {
         next: (response) => {
           if (response) {
             this.authResponse = response;
-          } else {
-            this.message = 'Account created successfully\nYou will be redirected to the Login page in 3 seconds';
+            this.message = 'Account created successfully. You will be redirected to the Login page in 3 seconds';
             setTimeout(() => {
               this.router.navigate(['login']);
             }, 3000);
@@ -111,7 +112,7 @@ export class SignUpComponent implements OnInit {
     this.authService.verifyCode(verifyRequest)
       .subscribe({
         next: (response) => {
-          this.message = 'Account created successfully\nYou will be redirected to the Welcome page in 3 seconds';
+          this.message = 'Account verified successfully. You will be redirected to the Welcome page in 3 seconds';
           setTimeout(() => {
             localStorage.setItem('token', response.accessToken as string);
             this.router.navigate(['welcome']);

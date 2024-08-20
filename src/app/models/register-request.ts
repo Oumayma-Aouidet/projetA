@@ -5,6 +5,6 @@
     email?: string;
     password?: string;
     role?: string;
-    mfaEnabled?: string;
+    mfaEnabled?:boolean;
   }
   
