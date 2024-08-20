@@ -25,42 +25,43 @@ import { CommonModule } from '@angular/common';
     CommonModule
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   authRequest: AuthenticationRequest = {
-    email: '', // Initialize email to bind with username field
-    password: '' // Initialize password to bind with password field
-    ,
+    email: '',
+    password: '',
     username: undefined
   };
-  otpCode: string = '';  // For holding the OTP code input by the user
-  authResponse: AuthenticationResponse = {}; // For storing the response from the authentication API
-username: any;
-password: any;
+  otpCode: string = '';
+  authResponse: AuthenticationResponse = {};
+
+  // Ajout de la propriété 'message' pour afficher des messages de succès ou d'erreur
+  message: string | undefined;
 
   constructor(
-    private authService: AuthenticationService, // Service to handle API calls
-    private router: Router                      // Router to navigate after successful login
+    private authService: AuthenticationService,
+    private router: Router
   ) {}
 
-  // Function to handle the login process
   authenticate() {
-    this.authRequest.username = this.authRequest.email; // Set the username to be the same as the email
+    this.authRequest.username = this.authRequest.email;
     this.authService.login(this.authRequest)
       .subscribe({
         next: (response) => {
           this.authResponse = response;
           if (!this.authResponse.mfaEnabled) {
-            // If MFA is not enabled, store the token and navigate to the welcome page
             localStorage.setItem('token', response.accessToken as string);
             this.router.navigate(['welcome']);
           }
+        },
+        error: (error) => {
+          console.error("Erreur lors de l'authentification", error);
+          this.message = "Erreur lors de l'authentification";
         }
       });
   }
 
-  // Function to verify the OTP code for MFA
   verifyCode() {
     const verifyRequest: VerificationRequest = {
       email: this.authRequest.email,
@@ -69,14 +70,16 @@ password: any;
     this.authService.verifyCode(verifyRequest)
       .subscribe({
         next: (response) => {
-          // Store the token and navigate to the welcome page after successful verification
           localStorage.setItem('token', response.accessToken as string);
           this.router.navigate(['welcome']);
+        },
+        error: (error) => {
+          console.error("Erreur lors de la vérification du code", error);
+          this.message = "Erreur lors de la vérification du code";
         }
       });
   }
 
-  // This is the method that will be called when the form is submitted
   onSubmit() {
     this.authenticate();
   }

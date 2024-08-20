@@ -9,6 +9,8 @@ import { AuthenticationRequest } from '../app/models/authentication-request';
   providedIn: 'root'
 })
 export class AuthenticationService {
+  
+  
 
   private baseUrl = 'http://localhost:8080/api/v1/auth';
 

@@ -32,7 +32,6 @@ import { ReactiveFormsModule, FormsModule, } from '@angular/forms';
 })
 export class SignUpComponent implements OnInit {
 
-  signUpForm: FormGroup;
   registerRequest: RegisterRequest = {};
   authResponse: AuthenticationResponse = {};
   message = '';
@@ -40,70 +39,33 @@ export class SignUpComponent implements OnInit {
 
   constructor(
     private authService: AuthenticationService,
-    private router: Router,
-    private fb: FormBuilder
+    private router: Router
   ) {
-    this.signUpForm = this.fb.group({
-      username: ['', Validators.required],
-      firstname: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required],
-      mfaEnabled: [false]
-    }, { validator: this.passwordMatchValidator });
   }
-
   ngOnInit(): void {
-    // Initialization code if needed
+    throw new Error('Method not implemented.');
   }
 
-  passwordMatchValidator(formGroup: FormGroup): void {
-    const password = formGroup.get('password')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
-    if (password !== confirmPassword) {
-      formGroup.get('confirmPassword')?.setErrors({ passwordMismatch: true });
-    } else {
-      formGroup.get('confirmPassword')?.setErrors(null);
-    }
-  }
-
-  onSubmit(): void {
-    if (this.signUpForm.valid) {
-      this.registerUser();
-    }
-  }
-
-  registerUser(): void {
+  registerUser() {
     this.message = '';
-  
-    // Populate registerRequest with form values
-    this.registerRequest = {
-      firstname: this.signUpForm.get('firstname')?.value,
-      lastname: this.signUpForm.get('username')?.value, // Fixed mapping
-      email: this.signUpForm.get('email')?.value,
-      password: this.signUpForm.get('password')?.value,
-      role: 'USER',  // Default role or adjust as needed
-      mfaEnabled: this.signUpForm.get('mfaEnabled')?.value || false
-    };
-  
     this.authService.register(this.registerRequest)
       .subscribe({
         next: (response) => {
           if (response) {
             this.authResponse = response;
-            this.message = 'Account created successfully. You will be redirected to the Login page in 3 seconds';
+          } else {
+            // inform the user
+            this.message = 'Account created successfully\nYou will be redirected to the Login page in 3 seconds';
             setTimeout(() => {
               this.router.navigate(['login']);
-            }, 3000);
+            }, 3000)
           }
-        },
-        error: (err) => {
-          this.message = 'An error occurred. Please try again later.';
         }
       });
+
   }
 
-  verifyTfa(): void {
+  verifyTfa() {
     this.message = '';
     const verifyRequest: VerificationRequest = {
       email: this.registerRequest.email,
@@ -112,14 +74,11 @@ export class SignUpComponent implements OnInit {
     this.authService.verifyCode(verifyRequest)
       .subscribe({
         next: (response) => {
-          this.message = 'Account verified successfully. You will be redirected to the Welcome page in 3 seconds';
+          this.message = 'Account created successfully\nYou will be redirected to the Welcome page in 3 seconds';
           setTimeout(() => {
             localStorage.setItem('token', response.accessToken as string);
             this.router.navigate(['welcome']);
           }, 3000);
-        },
-        error: (err) => {
-          this.message = 'An error occurred. Please try again later.';
         }
       });
   }

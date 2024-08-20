@@ -1,80 +1,61 @@
 <div class="auth-container">
   <mat-card class="auth-card">
-    <mat-card-title class="auth-title">S'inscrire</mat-card-title>
+    <mat-card-title class="auth-title">Register</mat-card-title>
     <mat-card-content>
-      <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
-        
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nom</mat-label>
-          <input matInput placeholder="Nom" formControlName="firstname" required>
-          <mat-error *ngIf="signUpForm.get('firstname')?.hasError('required')">Le prénom est requis</mat-error>
-        </mat-form-field>
-        
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Prénom</mat-label>
-          <input matInput placeholder="Prénom" formControlName="username" required>
-          <mat-error *ngIf="signUpForm.get('username')?.hasError('required')">Le nom d'utilisateur est requis</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Adresse e-mail</mat-label>
-          <input matInput placeholder="Adresse e-mail" formControlName="email" type="email" required>
-          <mat-error *ngIf="signUpForm.get('email')?.hasError('required')">L'adresse e-mail est requise</mat-error>
-          <mat-error *ngIf="signUpForm.get('email')?.hasError('email')">Adresse e-mail invalide</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Mot de passe</mat-label>
-          <input matInput placeholder="Mot de passe" formControlName="password" type="password" required>
-          <mat-error *ngIf="signUpForm.get('password')?.hasError('required')">Le mot de passe est requis</mat-error>
-          <mat-error *ngIf="signUpForm.get('password')?.hasError('minlength')">Le mot de passe doit comporter au moins 6 caractères</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Confirmer le mot de passe</mat-label>
-          <input matInput placeholder="Confirmer le mot de passe" formControlName="confirmPassword" type="password" required>
-          <mat-error *ngIf="signUpForm.get('confirmPassword')?.hasError('required')">La confirmation du mot de passe est requise</mat-error>
-          <mat-error *ngIf="signUpForm.hasError('passwordMismatch')">Les mots de passe ne correspondent pas</mat-error>
-        </mat-form-field>
-
+      <form (ngSubmit)="registerUser()">
         <div class="form-group">
-          <mat-checkbox formControlName="mfaEnabled">
-            Activer la 2FA (Authentification à deux facteurs)
+          <mat-form-field appearance="outline">
+            <mat-label>First name</mat-label>
+            <input matInput placeholder="First name" [(ngModel)]="registerRequest.firstname" name="firstname" required>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Last name</mat-label>
+            <input matInput placeholder="Last name" [(ngModel)]="registerRequest.lastname" name="lastname" required>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput placeholder="Email" [(ngModel)]="registerRequest.email" name="email" required>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput placeholder="Password" [(ngModel)]="registerRequest.password" name="password" type="password" required>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-checkbox [(ngModel)]="registerRequest.mfaEnabled" name="mfaEnabled">
+            Enable 2FA (Two-Factor Authentication)
           </mat-checkbox>
         </div>
-
-        <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="signUpForm.invalid">S'inscrire</button>
-
-        <a mat-button routerLink="/login">Se connecter</a>
+        <button mat-raised-button color="primary" type="submit">Register</button>
       </form>
+        <a routerLink="../login">Already have an account? Login</a>
+      
+    </mat-card-content>
+  </mat-card>
+</div>
 
-      <div class="container" *ngIf="authResponse?.mfaEnabled">
-        <div class="success-message-panel" *ngIf="message">
-          <div class="success-icon">&#10004;</div>
-          <div class="success-message">{{message}}</div>
-        </div>
-
-        <h2>Configurer l'Authentification à Deux Facteurs</h2>
-        <div class="qr-code">
-          <img [src]="authResponse.secretImageUri" alt="QR Code">
-        </div>
-        <div class="form-group">
-          <label for="validationCode">Entrez le code de validation à 6 chiffres généré par l'application</label>
-          <input
-            type="text"
-            id="validationCode"
-            name="validationCode"
-            required
-            [(ngModel)]="otpCode"
-            [ngModelOptions]="{standalone: true}"
-          >
-        </div>
-        <button
-          type="button"
-          (click)="verifyTfa()"
-          [class.button-disabled]="otpCode.length < 6"
-        >Vérifier le code</button>
+<div class="auth-container" *ngIf="authResponse.mfaEnabled">
+  <mat-card class="auth-card">
+    <mat-card-title class="auth-title">Set Up Two-Factor Authentication</mat-card-title>
+    <mat-card-content>
+      <div class="qr-code">
+        <img [src]="authResponse.secretImageUri" alt="QR Code">
       </div>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Validation Code</mat-label>
+          <input matInput placeholder="Enter 6 digits Validation Code" [(ngModel)]="otpCode" name="validationCode" required>
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" type="button" (click)="verifyTfa()" [disabled]="otpCode.length < 6">
+        Verify Code
+      </button>
     </mat-card-content>
   </mat-card>
 </div>
