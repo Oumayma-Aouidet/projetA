@@ -73,6 +73,17 @@ export class SignUpComponent implements OnInit {
 
   registerUser(): void {
     this.message = '';
+  
+    // Populate registerRequest with form values
+    this.registerRequest = {
+      firstname: this.signUpForm.get('firstname')?.value,
+      lastname: this.signUpForm.get('lastname')?.value,
+      email: this.signUpForm.get('email')?.value,
+      password: this.signUpForm.get('password')?.value,
+      role: 'USER',  // ou tout autre rôle par défaut
+      mfaEnabled: 'false' // ou 'true' si nécessaire
+    };
+  
     this.authService.register(this.registerRequest)
       .subscribe({
         next: (response) => {
